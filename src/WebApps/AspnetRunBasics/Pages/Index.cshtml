@@ -1,0 +1,81 @@
+﻿@page
+@model AspnetRunBasics.IndexModel
+@{
+    ViewData["Title"] = "Contact";
+}
+
+
+<h1>OnlyAdmin</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Claim Type
+            </th>
+            <th>
+                Claim Value
+            </th>            
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.xm.userInfoDictionary)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Key)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Value)
+                </td>                            
+            </tr>
+        }
+    </tbody>
+</table>
+<hr />
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">Orders</h1>
+        <p class="lead text-muted mb-0">List of Orders</p>
+    </div>
+</section>
+
+
+<div class="container mb-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col"> </th>
+                            <th scope="col">First Name</th>
+                            <th scope="col">Last Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Address</th>
+                            <th scope="col" class="text-right">TotalPrice</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+                                <td><img src="https://dummyimage.com/50x50/55595c/fff" /></td>
+                                <td>@order.FirstName</td>
+                                <td>@order.LastName</td>
+                                <td>@order.EmailAddress</td>
+                                <td>@order.AddressLine</td>
+                                <td class="text-right">@order.TotalPrice $</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
+    </div>
+</div>
+
+
+

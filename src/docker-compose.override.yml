@@ -1,0 +1,258 @@
+version: '3.4'
+
+services:
+
+    
+      
+
+
+  
+    
+      
+  
+  sqlServer:
+    container_name: sqlServer
+    environment:
+        SA_PASSWORD: '${DB_PASSWORD:-Password_123}'
+        ACCEPT_EULA: "Y"
+    restart: always
+    ports:
+        - "5555:1433"
+    volumes:
+      - 'dbdata:/var/opt/mssql'
+    
+      
+
+
+    
+      
+
+  portainer:
+    container_name: portainer
+    restart: always
+    ports:
+        - "9000:9000"
+        - "8080:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer-data:/data
+    
+      
+
+ 
+  ############### IDENTITY SERVER ################       
+   
+ 
+
+  identityserver.admin:
+    
+    container_name: identityserveradmin
+    environment:
+      #- VIRTUAL_PROTO=http
+      #- VIRTUAL_PORT=443
+      - 'ConnectionStrings__ConfigurationDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__PersistedGrantDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__IdentityDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__AdminLogDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__AdminAuditLogDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__DataProtectionDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'AdminConfiguration__IdentityAdminBaseUrl=http://identityserver.admin'
+      - 'AdminConfiguration__IdentityAdminRedirectUri=http://identityserver.admin/signin-oidc'
+      - 'AdminConfiguration__IdentityServerBaseUrl=http://identityserver'
+      - AdminConfiguration__RequirehttpMetadata=false
+      - 'IdentityServerData__Clients__0__ClientUri=http://identityserver.admin'
+      - 'IdentityServerData__Clients__0__RedirectUris__0=http://identityserver.admin/signin-oidc'
+      - 'IdentityServerData__Clients__0__FrontChannelLogoutUri=http://identityserver.admin/signin-oidc'
+      - 'IdentityServerData__Clients__0__PostLogoutRedirectUris__0=http://identityserver.admin/signout-callback-oidc'
+      - 'IdentityServerData__Clients__0__AllowedCorsOrigins__0=http://identityserver.admin'
+      - 'IdentityServerData__Clients__1__RedirectUris__0=http://identityserver.admin.api/swagger/oauth2-redirect.html'
+      - 'Serilog__WriteTo__1__Args__connectionString=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+
+      - ASPNETCORE_ENVIRONMENT=Development
+    command: dotnet Skoruba.IdentityServer4.Admin.dll /seed
+
+    ports:
+      - "7001:80"
+    depends_on:
+      - sqlServer
+      - identityserver
+    volumes:
+      - './shared/serilog.json:/app/serilog.json'
+      - './shared/identitydata.json:/app/identitydata.json'
+      - './shared/identityserverdata.json:/app/identityserverdata.json'
+
+    
+      
+
+  identityserver.admin.api:
+   
+
+    container_name: identityserveradminapi
+    environment:
+      #- VIRTUAL_PROTO=http
+      #- VIRTUAL_PORT=443
+      - AdminApiConfiguration__RequirehttpMetadata=false
+      - 'AdminApiConfiguration__ApiBaseUrl=http://identityserver.admin.api'
+      - 'AdminApiConfiguration__IdentityServerBaseUrl=http://identityserver'
+      - 'ConnectionStrings__ConfigurationDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__PersistedGrantDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__IdentityDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__AdminLogDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__AdminAuditLogDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__DataProtectionDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - './shared/serilog.json:/app/serilog.json'
+    ports:
+      - "7002:80"      
+    
+      
+      #https://stackoverflow.com/questions/66205432/redirect-host-inside-docker-compose-network-to-localhost-outside-docker
+
+  identityserver:
+
+    container_name: identityserver
+    environment:
+      #- VIRTUAL_PROTO=http
+      #- VIRTUAL_PORT=443      
+      - ASPNETCORE_URLS=http://+:80
+      - 'ConnectionStrings__ConfigurationDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__PersistedGrantDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__IdentityDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'ConnectionStrings__DataProtectionDbConnection=Server=sqlServer;Database=IdentityServer4Admin;User Id=sa;Password=${DB_PASSWORD:-Password_123};MultipleActiveResultSets=true'
+      - 'AdminConfiguration__IdentityAdminBaseUrl=http://identityserver.admin'
+      - 'IdentityServerOptions__IssuerUri=http://identityserver'
+      - identityserverOptions__Events__RaiseErrorEvents=true
+      - identityserverOptions__Events__RaiseInformationEvents=true
+      - identityserverOptions__Events__RaiseFailureEvents=true
+      - identityserverOptions__Events__RaiseSuccessEvents=true
+      - "ElasticConfiguration__Uri=http://elasticsearch:9200"
+      - "ElasticApm__ServerUrl=http://apmServer:8200"
+      
+      
+
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - sqlServer
+      - apm-server
+      - elasticsearch 
+    volumes:
+      - './shared/serilog.json:/app/serilog.json'
+    ports:
+      - "7000:80"
+    
+    
+
+
+
+#################################################################
+
+ 
+     
+    
+       
+
+  
+     
+      
+
+  
+     
+    
+     
+
+
+       
+  
+     
+    
+       
+        
+
+  elasticsearch:
+    container_name: elasticsearch
+    environment:
+        - xpack.monitoring.enabled=true
+        - xpack.watcher.enabled=false
+        - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+        - discovery.type=single-node
+    ports:
+        - "9200:9200"
+    volumes:
+        - elasticsearch-data:/usr/share/elasticsearch/data
+    
+      
+
+  kibana:
+    container_name: kibana
+    environment:
+        - ELASTICSEARCH_URL=http://elasticsearch:9200
+        - 'apm_oss.errorIndices:apm-*'
+        - 'apm_oss.spanIndices:apm-*'
+        - 'apm_oss.transactionIndices:apm-*'
+        - 'apm_oss.onboardingIndices:apm-*'
+    depends_on:
+        - elasticsearch
+    ports:
+        - "5601:5601" 
+    
+      
+
+  apm-server:
+     container_name: apmServer
+     depends_on:
+      - elasticsearch
+      - kibana
+     
+     cap_add: ["CHOWN", "DAC_OVERRIDE", "SETGID", "SETUID"]
+     cap_drop: ["ALL"]
+     ports:
+     - 8200:8200
+     
+       
+     command: >
+        apm-server -e --strict.perms=false 
+         
+          -E output.elasticsearch.hosts=["http://elasticsearch:9200"]
+     volumes:
+        - './apm-server.yml:/usr/share/apm-server/apm-server.yml'
+
+  #webstatus:
+  #  container_name: webstatus
+  #  environment:
+  #    - ASPNETCORE_ENVIRONMENT=Development
+  #    - HealthChecksUI__HealthChecks__0__Name=Catalog Health Check
+  #    - HealthChecksUI__HealthChecks__0__Uri=http://catalog.api/hc
+  #    - HealthChecksUI__HealthChecks__1__Name=Basket Health Check
+  #    - HealthChecksUI__HealthChecks__1__Uri=http://basket.api/hc
+  #    - HealthChecksUI__HealthChecks__2__Name=Discount Health Check
+  #    - HealthChecksUI__HealthChecks__2__Uri=http://discount.api/hc
+  #    - HealthChecksUI__HealthChecks__3__Name=Ordering Health Check
+  #    - HealthChecksUI__HealthChecks__3__Uri=http://ordering.api/hc
+  #    - HealthChecksUI__HealthChecks__4__Name=Shopping Aggregator Health Check
+  #    - HealthChecksUI__HealthChecks__4__Uri=http://shopping.aggregator/hc
+  #    - HealthChecksUI__HealthChecks__5__Name=AspnetRunBasics WebMVC Health Check
+  #    - HealthChecksUI__HealthChecks__5__Uri=http://aspnetrunbasics/hc
+  #  ports:
+  #    - "8007:80"   
+  #  
+  #    
+    
+
+   
+      
+##create a SAN cert for both host.docker.internal and localhost
+#$cert = New-SelfSignedCertificate -DnsName "host.docker.internal", "localhost" -CertStoreLocation cert:\localmachine\my
+
+##export it for docker container to pick up later
+#$password = ConvertTo-SecureString -String "1234" -Force -AsPlainText
+#Export-PfxCertificate -Cert $cert -FilePath $env:USERPROFILE\.aspnet\http\aspnetappqsdqwe.pfx -Password $password
+
+## trust it on your host machine
+#$store = New-Object System.Security.Cryptography.X509Certificates.X509Store "TrustedPublisher","LocalMachine"
+#$store.Open("ReadWrite")
+#$store.Add($cert)
+#$store.Close()
+
+      #docker run -v $PWD/work -it nginx openssl req -out /work/CSR.csr -new -newkey rsa:2048 -nodes -keyout /work/privateKey.key
