@@ -29,6 +29,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspnetRunBasics", "WebApps\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Logging", "BuildingBlocks\Common.Logging\Common.Logging.csproj", "{0797EB8B-773B-42D1-86AE-4C84364E7CA0}"
 EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "AngularRunBasics", "WebApps\AngularRunBasics\AngularRunBasics.esproj", "{E889567B-95BA-4028-BAA7-2671A4BFF50F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -67,6 +69,12 @@ Global
 		{0797EB8B-773B-42D1-86AE-4C84364E7CA0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0797EB8B-773B-42D1-86AE-4C84364E7CA0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0797EB8B-773B-42D1-86AE-4C84364E7CA0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E889567B-95BA-4028-BAA7-2671A4BFF50F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E889567B-95BA-4028-BAA7-2671A4BFF50F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E889567B-95BA-4028-BAA7-2671A4BFF50F}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{E889567B-95BA-4028-BAA7-2671A4BFF50F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E889567B-95BA-4028-BAA7-2671A4BFF50F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E889567B-95BA-4028-BAA7-2671A4BFF50F}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +88,7 @@ Global
 		{2E9C2B0B-44D0-4131-8D08-5492184BEAA5} = {7B4DBD38-9B4F-4733-9F70-41B0EC25B592}
 		{15A533FB-C4EB-4E5A-94D6-B920A087618C} = {6B6DC5C5-CA76-453E-B258-E867B9D0692E}
 		{0797EB8B-773B-42D1-86AE-4C84364E7CA0} = {FA4F8C73-2E1D-4484-8D39-82C82139D49E}
+		{E889567B-95BA-4028-BAA7-2671A4BFF50F} = {6B6DC5C5-CA76-453E-B258-E867B9D0692E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {76621490-0646-4C18-9F22-DB0851CAA24B}
