@@ -25,6 +25,7 @@ import { MemberEditComponent } from './members/member-edit/member-edit.component
 import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
 import { FileUploadModule } from "ng2-file-upload"
+import { AuthConfigModule } from './auth/auth-config.module';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,9 @@ import { FileUploadModule } from "ng2-file-upload"
     FormsModule,
     AppRoutingModule,
     
-    SharedModule
+    SharedModule,
+  
+    AuthConfigModule,
     
   ],
   providers: [

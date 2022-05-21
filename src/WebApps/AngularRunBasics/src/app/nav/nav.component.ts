@@ -5,6 +5,7 @@ import { ToastrService} from 'ngx-toastr'
 import { filter, Observable } from 'rxjs';
 import { User } from '../_models/user';
 import { MembersService } from '../_services/members.service';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 //import { MembersService } from "../_services/members.service";
 
 @Component({
@@ -18,7 +19,7 @@ export class NavComponent implements OnInit {
   model: any = {}
  
   /*currentUser$: Observable<User>;*/
-  constructor(public accountService: AccountService, private router: Router, private toastr: ToastrService//,
+  constructor(public oidcSecurityService: OidcSecurityService, public accountService: AccountService, private router: Router, private toastr: ToastrService//,
    /* private membersService:MembersService*/)//account is public to be access to templte {html}
    {
     
@@ -40,14 +41,17 @@ export class NavComponent implements OnInit {
       });
     
   }
-  logout() {
-    this.accountService.logout();
+  //logout() {
+  //  this.accountService.logout();
     
 
-    //this.membersService.resetMemberCache();
-    this.router.navigateByUrl('/');
+  //  //this.membersService.resetMemberCache();
+  //  this.router.navigateByUrl('/');
 
 
+  //}
+  logout() {
+    this.oidcSecurityService.logoff();
   }
   //getCurrentUser() {
   
