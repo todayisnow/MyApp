@@ -3,11 +3,11 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "AngularRunBasics": {
+    "NewDatingApp": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:application": {
-          "strict": true
+          "strict": false
         }
       },
       "root": "",
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/angular-run-basics",
+            "outputPath": "dist/new-dating-app",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -27,6 +27,13 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/ngx-bootstrap/datepicker/bs-datepicker.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/bootswatch/dist/United/bootstrap.css",
+              "node_modules/font-awesome/css/font-awesome.css",
+              "node_modules/ngx-toastr/toastr.css",
+              "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
+
               "src/styles.css"
             ],
             "scripts": []
@@ -68,21 +75,25 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "AngularRunBasics:build:production"
+              "browserTarget": "NewDatingApp:build:production"
             },
             "development": {
-              "browserTarget": "AngularRunBasics:build:development"
+              "browserTarget": "NewDatingApp:build:development"
             }
           },
           "defaultConfiguration": "development",
           "options": {
-            "proxyConfig": "src/proxy.conf.js"
+            "proxyConfig": "src/proxy.conf.js",
+            "sslCert": "src/ssl/server.crt",
+            "sslKey": "src/ssl/server.key",
+            "ssl": true
+
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "AngularRunBasics:build"
+            "browserTarget": "NewDatingApp:build"
           }
         },
         "test": {
@@ -105,5 +116,5 @@
       }
     }
   },
-  "defaultProject": "AngularRunBasics"
+  "defaultProject": "NewDatingApp"
 }

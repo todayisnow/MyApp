@@ -1,11 +1,12 @@
 const PROXY_CONFIG = [
   {
     context: [
-      "/weatherforecast",
+      "/APIGateWay/Order",
     ],
-    target: "https://localhost:5001",
+    target: "https://localhost:5010",
     secure: false
   }
+  
 ]
 
 module.exports = PROXY_CONFIG;

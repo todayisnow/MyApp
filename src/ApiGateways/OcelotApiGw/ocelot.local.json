@@ -11,7 +11,7 @@
           "Port": "5004"
         }
       ],
-      "UpstreamPathTemplate": "/Order/{userName}",
+      "UpstreamPathTemplate": "/APIGateWay/Order/{userName}",
       "UpstreamHttpMethod": [ "GET" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "IdentityApiKey",
@@ -27,7 +27,7 @@
           "Port": "5004"
         }
       ],
-      "UpstreamPathTemplate": "/Order",
+      "UpstreamPathTemplate": "/APIGateWay/Order",
       "UpstreamHttpMethod": [ "GET" ],
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "IdentityApiKey",

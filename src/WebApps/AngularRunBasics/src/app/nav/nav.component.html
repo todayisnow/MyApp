@@ -1,0 +1,41 @@
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
+  <div class="container">
+    <a class="navbar-brand" routerLink='/'>Dating App</a>
+    <ul class="navbar-nav me-auto mb-2 mb-md-0" >
+      <!--The async pipe subscribes to an Observable or Promise and returns the latest value it has emitted. When a new value is emitted, the async pipe marks the component to be checked for changes. When the component gets destroyed, the async pipe unsubscribes automatically to avoid potential memory leaks.-->
+       <ng-container *ngIf="accountService.currentUser$ | async">
+      <li class="nav-item">
+        <a class="nav-link" routerLink='/members' routerLinkActive='active'>Matches</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink='/lists' routerLinkActive='active'>Lists</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link " routerLink='/messages' routerLinkActive='active'>Messages</a>
+      </li>
+      <li class="nav-item">
+        <!--<a class="nav-link " routerLink='/admin' routerLinkActive='active' *appHasRole='["Admin"]'>Admin</a>-->
+      </li>
+      </ng-container>
+    </ul>
+  
+    <div class="dropdown" *ngIf="(accountService.currentUser$ | async) as user" dropdown>
+      <img src="{{user.photoUrl || '../assets/user.png'}}" alt="{{user.username}}" />
+      <a class="dropdown-toggle text-right ms-2 text-decoration-none text-white-50" dropdownToggle>Welcome {{user.knownAs || user.username | titlecase}}</a>
+      <div class="dropdown-menu mt-3" *dropdownMenu>
+        <a class="dropdown-item" routerLink="/member/edit">Edit Profile</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" (click)="logout()">Logout</a>
+      </div>
+    </div>
+    
+    <form #loginForm="ngForm" *ngIf="(accountService.currentUser$ | async) ===null" class="d-flex mt-2 mt-md-0" (ngSubmit)="login()" autocomplete="off">
+      <input class="form-control me-sm-2" type="text" placeholder="Username" name="username" [(ngModel)]="model.username" tooltip="Username">
+      <input class="form-control me-sm-2" type="password" placeholder="Password" name="password" [(ngModel)]="model.password" tooltip="Password">
+      <button class="btn btn-success my-2 my-sm-0" type="submit">Login</button>
+    </form>
+
+
+  </div>
+
+</nav>

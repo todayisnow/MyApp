@@ -1,26 +1,55 @@
-import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+ import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { User } from './_models/user';
+import { AccountService } from './_services/account.service';
+import { MembersService } from './_services/members.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
-  public forecasts?: WeatherForecast[];
+export class AppComponent implements OnInit {
+    title = "NewDatingApp";
+  public users?: any;
 
-  constructor(http: HttpClient) {
-    http.get<WeatherForecast[]>('/weatherforecast').subscribe(result => {
-      this.forecasts = result;
-    }, error => console.error(error));
+  constructor(private accountService: AccountService, private http: HttpClient) {
+   
   }
 
-  title = 'AngularRunBasics';
+   
+  ngOnInit() {
+    
+   // this.getUsers();
+    this.setCurrentUser();
+  }
+  setCurrentUser() {
+    //var storageData = localStorage.getItem('user');
+    //const user: User = !!storageData ? JSON.parse(storageData || '{}') : null ;
+    const user: User = JSON.parse(localStorage.getItem('user')) ;
+    if (user) {
+
+      this.accountService.setCurrentUser(user);
+
+      //this.presence.createHubConnection(user);
+
+    }
+
+
+  }
+
+
+  //private getUsers() {
+  //  const myObserver = {
+  //    next: (result: any) => this.users = result,
+  //    error: (error: Error) => console.error(error),
+  //    complete: () => console.log("complete")
+  //  };
+  //  this.http.get('/api/users').subscribe(myObserver);
+
+      
+  //  }
 }
 
-interface WeatherForecast {
-  date: string;
-  temperatureC: number;
-  temperatureF: number;
-  summary: string;
-}
+
+
