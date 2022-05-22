@@ -3,7 +3,7 @@ import { AccountService } from "../_services/account.service";
 import { ToastrService } from 'ngx-toastr'
 import { FormGroup, FormControl, Validators, ValidatorFn, AbstractControl, FormBuilder } from "@angular/forms";
 import { Router } from "@angular/router";
-import { User } from '../_models/user';
+
 
 @Component({
   selector: 'app-register',
@@ -50,14 +50,7 @@ export class RegisterComponent implements OnInit {
 
   register() {
  
-    this.accountService.register(/*this.registerForm.value*/this.model).subscribe(response => {
-
-       // this.router.navigateByUrl('/members');
-      },
-      error => {
-        
-        this.validationErrors = error;
-      });
+    
   }
   cancel() {
     this.cancelRegister.emit(false);

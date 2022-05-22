@@ -1,4 +1,4 @@
-import { User } from './user';
+import { UserDataResult } from './user';
 import { PaginationParams } from './paginationParams';
 
 export class UserParams extends PaginationParams {
@@ -9,8 +9,8 @@ export class UserParams extends PaginationParams {
   override pageSize = 20;
   orderBy = 'lastActive';
 
-  constructor(user: User) {
+  constructor(user: UserDataResult) {
     super();
-    this.gender = user.gender === 'female' ? 'male' : 'female';
+    this.gender = user.userData.gender === 'female' ? 'male' : 'female';
   }
 }
