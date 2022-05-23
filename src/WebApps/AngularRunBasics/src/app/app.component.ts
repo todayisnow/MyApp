@@ -1,9 +1,8 @@
  import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { User } from './_models/user';
-import { AccountService } from './_services/account.service';
-import { MembersService } from './_services/members.service';
 import { OidcSecurityService } from 'angular-auth-oidc-client';
+
+import { AccountService } from './_services/account.service';
 
 @Component({
   selector: 'app-root',
@@ -11,39 +10,34 @@ import { OidcSecurityService } from 'angular-auth-oidc-client';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-    title = "NewDatingApp";
+    title = "Mofa Sample";
   public users?: any;
 
-  constructor(public oidcSecurityService: OidcSecurityService,private accountService: AccountService, private http: HttpClient) {
+  constructor(private oidcSecurityService: OidcSecurityService, private http: HttpClient) {
    
   }
 
    
   ngOnInit() {
     this.oidcSecurityService.checkAuth().subscribe(({ isAuthenticated, userData, accessToken }) => {
-      if (!isAuthenticated)
+      if (!isAuthenticated) {
         this.oidcSecurityService.authorize();
-      console.log(userData)
+        if (userData) {
+
+          localStorage.setItem('user', JSON.stringify(userData));// save user to browser local storage
+          
+        }
+      }
+      
     });
-   // this.getUsers();
-    this.setCurrentUser();
+  
   }
  
  
-  setCurrentUser() {
-    //var storageData = localStorage.getItem('user');
-    //const user: User = !!storageData ? JSON.parse(storageData || '{}') : null ;
-    const user: User = JSON.parse(localStorage.getItem('user')) ;
-    if (user) {
-
-      this.accountService.setCurrentUser(user);
-
-      //this.presence.createHubConnection(user);
-
-    }
+  
 
 
-  }
+  
 
 
   //private getUsers() {

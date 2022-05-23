@@ -7,23 +7,24 @@ import {
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AccountService } from '../_services/account.service';
-import { User } from '../_models/user';
+import { UserDataResult } from '../_models/user';
 import { take } from 'rxjs/operators';
+import { OidcSecurityService } from 'angular-auth-oidc-client';
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
 
-  constructor(private accountService: AccountService) { }
+  constructor(private oidcSecurityService: OidcSecurityService) { }
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    let currentUser: User;
-    this.accountService.currentUser$.pipe(take(1)).subscribe(user => currentUser = user);
+    let myToken: string;
+    this.oidcSecurityService.getAccessToken().pipe(take(1)).subscribe(user => myToken = user);
     //take 1 unsubscibe once got the first value
-
-    if (currentUser) {
+    console.log(myToken)
+    if (myToken) {
       request = request.clone({
         setHeaders: {
-          Authorization: `Bearer ${currentUser.token}`
+          Authorization: `Bearer ${myToken}`
         }
       });
     }

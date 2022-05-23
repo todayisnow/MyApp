@@ -6,7 +6,7 @@ import { of } from "rxjs";
 import { map } from "rxjs/operators";
 import { UserParams} from '../_models/userParams'
 import { AccountService } from "./account.service";
-import { User } from "../_models/user";
+import { UserDataResult } from "../_models/user";
 import { take } from "rxjs/operators";
 import { getPaginatedResult, getPaginationHeaders } from './paginationHelper';
 // interceptor used instead 
@@ -23,10 +23,10 @@ export class MembersService {
   baseUrl = "/api/";
   memberCache= new Map();
   userParams: UserParams;
-  user: User;
+  user: UserDataResult;
   members: Member[] = []
   constructor(private http: HttpClient, private accountService: AccountService) {
-    this.accountService.currentUser$.pipe(take(1)).subscribe((user: User) => {
+    this.accountService.currentUser$.pipe(take(1)).subscribe((user: UserDataResult) => {
       this.user = user;
       this.userParams = new UserParams(user);
       this.getMembers(this.userParams)

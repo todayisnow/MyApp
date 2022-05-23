@@ -77,7 +77,7 @@ namespace Ordering.API
                     (policy) =>
                     {
                         policy.RequireClaim("scope", "orderAPI");
-                        policy.RequireClaim("client_id", "testClient", "aspnetRunBasics_client");
+                        policy.RequireClaim("client_id", "angularRunBasics-client", "aspnetRunBasics_client");
                     });
             });
             services.AddHealthChecks().AddDbContextCheck<OrderContext>();

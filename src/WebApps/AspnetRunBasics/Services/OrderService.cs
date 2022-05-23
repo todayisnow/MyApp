@@ -18,12 +18,12 @@ namespace AspnetRunBasics.Services
 
         public async Task<IEnumerable<OrderResponseModel>> GetOrdersByUserName(string userName)
         {
-            var response = await _client.GetAsync($"/Order/{userName}");
+            var response = await _client.GetAsync($"/APIGateWay/Order/{userName}");
             return await response.ReadContentAs<List<OrderResponseModel>>();
         }
         public async Task<IEnumerable<OrderResponseModel>> GetOrders()
         {
-            var response = await _client.GetAsync($"/Order");
+            var response = await _client.GetAsync($"/APIGaeWay/Order");
             return await response.ReadContentAs<List<OrderResponseModel>>();
         }
     }
