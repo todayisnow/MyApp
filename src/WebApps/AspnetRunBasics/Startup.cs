@@ -1,10 +1,13 @@
 using AspnetRunBasics.Extensions;
 using Elastic.Apm.NetCoreAll;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using System;
 
@@ -49,8 +52,8 @@ namespace AspnetRunBasics
                 //options.Security.HstsConfigureAction?.Invoke(opt);
             });
 
-            //services.AddHealthChecks()
-            //    .AddUrlGroup(new Uri(Configuration["ApiSettings:GatewayAddress"]), "Ocelot API Gw", HealthStatus.Degraded);
+            services.AddHealthChecks()
+                .AddUrlGroup(new Uri(Configuration["ApiSettings:GatewayAddress"]), "Ocelot API Gw", HealthStatus.Degraded);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -107,11 +110,11 @@ namespace AspnetRunBasics
             {
                 endpoints.MapRazorPages();
 
-                //endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
-                //{
-                //    Predicate = _ => true,
-                //    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-                //});
+                endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
             });
         }
 

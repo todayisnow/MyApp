@@ -1,5 +1,7 @@
 using Elastic.Apm.NetCoreAll;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Ordering.Application;
 using Ordering.Infrastructure;
+using Ordering.Infrastructure.Persistence;
 
 namespace Ordering.API
 {
@@ -77,7 +80,7 @@ namespace Ordering.API
                         policy.RequireClaim("client_id", "testClient", "aspnetRunBasics_client");
                     });
             });
-            // services.AddHealthChecks().AddDbContextCheck<OrderContext>();
+            services.AddHealthChecks().AddDbContextCheck<OrderContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,6 +103,11 @@ namespace Ordering.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+                {
+                    Predicate = _ => true,
+                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                });
             });
         }
     }
