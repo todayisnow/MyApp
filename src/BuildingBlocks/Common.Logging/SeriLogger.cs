@@ -16,6 +16,7 @@ namespace Common.Logging
                var elasticUri = context.Configuration.GetValue<string>("ElasticConfiguration:Uri");
 
                configuration
+               .WriteTo.Seq("http://localhost:5341")
                     .Enrich.FromLogContext()
                     .Enrich.WithMachineName()
                     .WriteTo.Debug()

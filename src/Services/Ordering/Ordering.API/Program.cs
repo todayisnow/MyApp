@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 using Ordering.API.Extensions;
 using Ordering.Infrastructure.Persistence;
 using Serilog;
+using System;
+
 namespace Ordering.API
 {
     public class Program
@@ -17,6 +19,7 @@ namespace Ordering.API
                 .MigrateDatabase<OrderContext>((context, services) =>
                     {
                         var logger = services.GetService<ILogger<OrderContextSeed>>();
+                        logger.LogInformation("Hello, {Name}!", Environment.UserName);
                         OrderContextSeed
                             .SeedAsync(context, logger)
                             .Wait();
