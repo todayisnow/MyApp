@@ -7,9 +7,13 @@
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>catalog.api</DockerServiceName>
-	<DockerComposeProjectName>Aspnetrun-Microservices</DockerComposeProjectName>
+    <DockerComposeProjectName>Aspnetrun-Microservices</DockerComposeProjectName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="Configs\collector.yaml" />
+    <None Include="Configs\grafana-datasources.yaml" />
+    <None Include="Configs\prometheus.yml" />
+    <None Include="Configs\tempo.yaml" />
     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>

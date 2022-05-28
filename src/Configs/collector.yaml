@@ -1,0 +1,36 @@
+﻿receivers:
+  otlp:
+    protocols:
+      grpc:
+      http:
+
+exporters:
+  logging:
+      loglevel: debug
+      sampling_initial: 5
+      sampling_thereafter: 200
+  prometheus:
+    endpoint: 0.0.0.0:8889
+  otlp:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+  loki:
+    endpoint: http://loki:3100/loki/api/v1/push
+    format: json
+    labels:
+      resource:
+        service.name: "service_name"
+        body: ""
+
+service:
+  pipelines:
+    metrics:
+      receivers: [ otlp ]
+      exporters: [ prometheus ]
+    traces:
+      receivers: [ otlp ]
+      exporters: [ otlp ]
+    logs:
+      receivers: [ otlp ]
+      exporters: [ logging,loki ]

@@ -1,16 +1,13 @@
 using Elastic.Apm.NetCoreAll;
-using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Ordering.API.Extensions;
 using Ordering.Application;
 using Ordering.Infrastructure;
-using Ordering.Infrastructure.Persistence;
 
 namespace Ordering.API
 {
@@ -19,6 +16,7 @@ namespace Ordering.API
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
         }
 
         public IConfiguration Configuration { get; }
@@ -62,25 +60,30 @@ namespace Ordering.API
                 }
               });
             });
-            services.AddAuthentication("Bearer")
-        .AddJwtBearer("Bearer", options =>
-        {
-            options.Authority = Configuration["IdentityServer:Uri"];
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateAudience = false
-            };
-        });
+            //services.Configure<AuthrizationOptions>(Configuration.GetSection(key: nameof(AuthrizationOptions)));
+            var authrizationOptions = new AuthrizationOptions();
+            Configuration.GetSection(nameof(AuthrizationOptions)).Bind(authrizationOptions);
+
+            services.AddAuthentication("Bearer").
+AddIdentityServerAuthentication("Bearer", options =>
+{
+    options.ApiName = authrizationOptions.ApiResource;
+    options.Authority = authrizationOptions.Uri;
+
+});
+
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("ClientIdPolicy",
+                options.AddPolicy("AuthPolicy",
                     (policy) =>
                     {
-                        policy.RequireClaim("scope", "orderAPI");
-                        policy.RequireClaim("client_id", "angularRunBasics-client", "aspnetRunBasics_client");
+                        policy.RequireAuthenticatedUser();
+                        policy.RequireClaim("scope", authrizationOptions.AllowedScopes);
+
+                        policy.RequireClaim("client_id", authrizationOptions.AllowedClients);
                     });
             });
-            services.AddHealthChecks().AddDbContextCheck<OrderContext>();
+            //  services.AddHealthChecks().AddDbContextCheck<OrderContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -103,11 +106,11 @@ namespace Ordering.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
-                {
-                    Predicate = _ => true,
-                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-                });
+                //endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+                //{
+                //    Predicate = _ => true,
+                //    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                //});
             });
         }
     }

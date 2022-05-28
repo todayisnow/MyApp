@@ -1,16 +1,15 @@
 using AspnetRunBasics.Extensions;
 using Elastic.Apm.NetCoreAll;
-using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using System;
-
 namespace AspnetRunBasics
 {
     public class Startup
@@ -52,8 +51,34 @@ namespace AspnetRunBasics
                 //options.Security.HstsConfigureAction?.Invoke(opt);
             });
 
-            services.AddHealthChecks()
-                .AddUrlGroup(new Uri(Configuration["ApiSettings:GatewayAddress"]), "Ocelot API Gw", HealthStatus.Degraded);
+            // services.AddHealthChecks()
+            //   .AddUrlGroup(new Uri(Configuration["ApiSettings:GatewayAddress"]), "Ocelot API Gw", HealthStatus.Degraded);
+
+
+
+
+            services.AddOpenTelemetryTracing(x =>
+            {
+                x.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("motor"));
+                x.AddAspNetCoreInstrumentation(a => a.RecordException = true);
+                x.AddEntityFrameworkCoreInstrumentation(e => e.SetDbStatementForText = true);
+                x.AddHttpClientInstrumentation(h => h.RecordException = true);
+                x.AddMassTransitInstrumentation();
+                x.AddSource("motorSource");
+
+                x.AddOtlpExporter(options => options.Endpoint = new Uri("http://localhost:4317"));
+            });
+
+            services.AddOpenTelemetryMetrics(x =>
+            {
+                x.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("motor"));
+                x.AddAspNetCoreInstrumentation();
+                x.AddHttpClientInstrumentation();
+                x.AddMeter("motorMeter");
+                x.AddOtlpExporter(options => options.Endpoint = new Uri("http://localhost:4317"));
+                x.AddOtlpExporter(options => options.Endpoint = new Uri("http://localhost:4317"));
+            });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -110,11 +135,11 @@ namespace AspnetRunBasics
             {
                 endpoints.MapRazorPages();
 
-                endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
-                {
-                    Predicate = _ => true,
-                    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
-                });
+                //endpoints.MapHealthChecks("/hc", new HealthCheckOptions()
+                //{
+                //    Predicate = _ => true,
+                //    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+                //});
             });
         }
 

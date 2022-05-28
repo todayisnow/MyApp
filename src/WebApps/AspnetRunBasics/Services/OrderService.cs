@@ -23,7 +23,7 @@ namespace AspnetRunBasics.Services
         }
         public async Task<IEnumerable<OrderResponseModel>> GetOrders()
         {
-            var response = await _client.GetAsync($"/APIGaeWay/Order");
+            var response = await _client.GetAsync($"/APIGateWay/Order");
             return await response.ReadContentAs<List<OrderResponseModel>>();
         }
     }

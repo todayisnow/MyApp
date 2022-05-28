@@ -6,7 +6,7 @@ namespace Ordering.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize("AuthPolicy")]
     public class IdentityController : ControllerBase
     {
         [HttpGet]
@@ -14,5 +14,6 @@ namespace Ordering.API.Controllers
         {
             return new JsonResult(from c in User.Claims select new { c.Type, c.Value });
         }
+
     }
 }

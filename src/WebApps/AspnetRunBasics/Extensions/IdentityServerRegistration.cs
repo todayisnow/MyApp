@@ -80,6 +80,7 @@ namespace AspnetRunBasics.Extensions
                                 if (ctx.Failure.InnerException != null)
                                     logger.LogInformation(ctx.Failure.InnerException.Message);
                                 // React to the error here. See the notes below.
+
                                 return Task.CompletedTask;
                             }
                         };
@@ -123,14 +124,8 @@ namespace AspnetRunBasics.Extensions
 
         private static Task OnRedirectToIdentityProvider(RedirectContext context, string ruri)
         {
-            using var loggerFactory = LoggerFactory.Create(builder =>
-            {
-                builder.SetMinimumLevel(LogLevel.Information);
-                builder.AddConsole();
-                builder.AddEventSourceLogger();
-            });
-            var logger = loggerFactory.CreateLogger("Startup");
-            logger.LogInformation("Hello World");
+            context.ProtocolMessage.SetParameter("audience", "myOrderApi");
+
             //becasue ngix internal call convert to http
             context.ProtocolMessage.RedirectUri = ruri;
 
