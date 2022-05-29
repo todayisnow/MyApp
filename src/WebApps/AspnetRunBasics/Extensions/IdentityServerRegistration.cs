@@ -105,7 +105,7 @@ namespace AspnetRunBasics.Extensions
                         options.Scope.Add("OcelotApiGw");
                         options.Scope.Add("basketAPI");
 
-
+                        options.TokenValidationParameters.NameClaimType = System.Security.Claims.ClaimTypes.Name;
                         options.SaveTokens = true;
                         options.GetClaimsFromUserInfoEndpoint = true;
 

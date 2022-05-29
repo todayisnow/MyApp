@@ -5,6 +5,8 @@
       http:
 
 exporters:
+  zipkin:
+    endpoint: "http://zipkin:9411/api/v2/spans"
   logging:
       loglevel: debug
       sampling_initial: 5
@@ -23,14 +25,27 @@ exporters:
         service.name: "service_name"
         body: ""
 
-service:
+processors:
+  batch:
+
+extensions:
+  health_check:
+  pprof:
+    endpoint: :1888
+  zpages:
+    endpoint: :55679
+
+service: 
+  extensions: [pprof, zpages, health_check]
   pipelines:
     metrics:
       receivers: [ otlp ]
+      processors: [batch]
       exporters: [ prometheus ]
     traces:
-      receivers: [ otlp ]
-      exporters: [ otlp ]
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [zipkin]
     logs:
       receivers: [ otlp ]
       exporters: [ logging,loki ]

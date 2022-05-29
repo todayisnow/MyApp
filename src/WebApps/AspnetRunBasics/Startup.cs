@@ -59,22 +59,22 @@ namespace AspnetRunBasics
 
             services.AddOpenTelemetryTracing(x =>
             {
-                x.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("motor"));
+                x.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Mofa"));
                 x.AddAspNetCoreInstrumentation(a => a.RecordException = true);
                 x.AddEntityFrameworkCoreInstrumentation(e => e.SetDbStatementForText = true);
                 x.AddHttpClientInstrumentation(h => h.RecordException = true);
                 x.AddMassTransitInstrumentation();
-                x.AddSource("motorSource");
+                x.AddSource("MofaSource");
 
                 x.AddOtlpExporter(options => options.Endpoint = new Uri("http://localhost:4317"));
             });
 
             services.AddOpenTelemetryMetrics(x =>
             {
-                x.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("motor"));
+                x.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService("Mofa"));
                 x.AddAspNetCoreInstrumentation();
                 x.AddHttpClientInstrumentation();
-                x.AddMeter("motorMeter");
+                x.AddMeter("MofaMeter");
                 x.AddOtlpExporter(options => options.Endpoint = new Uri("http://localhost:4317"));
                 x.AddOtlpExporter(options => options.Endpoint = new Uri("http://localhost:4317"));
             });
@@ -87,8 +87,8 @@ namespace AspnetRunBasics
             app.UseAllElasticApm(Configuration);
             if (env.IsDevelopment())
             {
-                app.UseExceptionHandler("/Error");
-                //   app.UseDeveloperExceptionPage();
+                //app.UseExceptionHandler("/Error");
+                app.UseDeveloperExceptionPage();
             }
             else
             {
