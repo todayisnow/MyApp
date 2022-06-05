@@ -100,10 +100,10 @@ namespace AspnetRunBasics.Extensions
                         //options.ClaimActions.DeleteClaim("auth_time");
                         options.ClaimActions.MapJsonKey("role", "role", "role");
 
-                        options.Scope.Add("catalogAPI");
+
                         options.Scope.Add("orderAPI");
                         options.Scope.Add("OcelotApiGw");
-                        options.Scope.Add("basketAPI");
+
 
                         options.TokenValidationParameters.NameClaimType = System.Security.Claims.ClaimTypes.Name;
                         options.SaveTokens = true;
@@ -124,7 +124,7 @@ namespace AspnetRunBasics.Extensions
 
         private static Task OnRedirectToIdentityProvider(RedirectContext context, string ruri)
         {
-            context.ProtocolMessage.SetParameter("audience", "myOrderApi");
+            context.ProtocolMessage.SetParameter("audience", "orderApi");
 
             //becasue ngix internal call convert to http
             context.ProtocolMessage.RedirectUri = ruri;

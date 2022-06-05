@@ -5,7 +5,7 @@ import { AuthModule } from 'angular-auth-oidc-client';
 @NgModule({
   imports: [AuthModule.forRoot({
     config: {
-      authority: 'https://localhost:44310',
+      authority: 'https://sts.mofa.local',
       redirectUrl: 'https://localhost:4200',
       postLogoutRedirectUri: 'https://localhost:4200',
       clientId: 'angularRunBasics-client',
