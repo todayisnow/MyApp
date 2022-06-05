@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Ordering.API.Extensions;
 using System.Linq;
 
 namespace Ordering.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize("AuthPolicy")]
+    [Produces("application/json", "application/problem+json")]
+    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
     public class IdentityController : ControllerBase
     {
         [HttpGet]

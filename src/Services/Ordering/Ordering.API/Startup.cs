@@ -1,4 +1,6 @@
 using Elastic.Apm.NetCoreAll;
+using IdentityModel;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +41,30 @@ namespace Ordering.API
             services.AddAutoMapper(typeof(Startup));
 
             services.AddControllers();
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultForbidScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+               .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+               {
+                   options.Authority = adminApiConfiguration.IdentityServerBaseUrl;
+                   options.RequireHttpsMetadata = adminApiConfiguration.RequireHttpsMetadata;
+                   options.Audience = adminApiConfiguration.OidcApiName;
+               });
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy(AuthorizationConsts.AdministrationPolicy,
+                    policy =>
+                        policy.RequireAssertion(context => context.User.HasClaim(c =>
+                                ((c.Type == JwtClaimTypes.Role && c.Value == adminApiConfiguration.AdministrationRole) ||
+                                (c.Type == $"client_{JwtClaimTypes.Role}" && c.Value == adminApiConfiguration.AdministrationRole))
+                            ) && context.User.HasClaim(c => c.Type == JwtClaimTypes.Scope && c.Value == adminApiConfiguration.OidcApiName)
+                        ));
+            });
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc(adminApiConfiguration.ApiVersion, new OpenApiInfo { Title = adminApiConfiguration.ApiName, Version = adminApiConfiguration.ApiVersion });
@@ -89,28 +115,28 @@ namespace Ordering.API
             //  });
             //});
             //services.Configure<AuthrizationOptions>(Configuration.GetSection(key: nameof(AuthrizationOptions)));
-            var authrizationOptions = new AuthrizationOptions();
-            Configuration.GetSection(nameof(AuthrizationOptions)).Bind(authrizationOptions);
+            //            var authrizationOptions = new AuthrizationOptions();
+            //            Configuration.GetSection(nameof(AuthrizationOptions)).Bind(authrizationOptions);
 
-            services.AddAuthentication("Bearer").
-AddIdentityServerAuthentication("Bearer", options =>
-{
-    //options.ApiName = authrizationOptions.ApiResource;
-    options.Authority = authrizationOptions.Uri;
+            //            services.AddAuthentication("Bearer").
+            //AddIdentityServerAuthentication("Bearer", options =>
+            //{
+            //    // options.ApiName = authrizationOptions.ApiResource;
+            //    options.Authority = authrizationOptions.Uri;
 
-});
+            //});
 
-            services.AddAuthorization(options =>
-            {
-                options.AddPolicy("AuthPolicy",
-                    (policy) =>
-                    {
-                        policy.RequireAuthenticatedUser();
-                        policy.RequireClaim("scope", authrizationOptions.AllowedScopes);
+            //            services.AddAuthorization(options =>
+            //            {
+            //                options.AddPolicy("AuthPolicy",
+            //                    (policy) =>
+            //                    {
+            //                        policy.RequireAuthenticatedUser();
+            //                        policy.RequireClaim("scope", authrizationOptions.AllowedScopes);
 
-                        policy.RequireClaim("client_id", authrizationOptions.AllowedClients);
-                    });
-            });
+            //                        policy.RequireClaim("client_id", authrizationOptions.AllowedClients);
+            //                    });
+            //            });
             //  services.AddHealthChecks().AddDbContextCheck<OrderContext>();
         }
 
