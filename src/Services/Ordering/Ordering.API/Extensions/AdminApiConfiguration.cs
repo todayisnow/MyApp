@@ -21,6 +21,9 @@
         public bool CorsAllowAnyOrigin { get; set; }
 
         public string[] CorsAllowOrigins { get; set; }
+        public string[] Audiences { get; set; }
+        public string[] AllowedScopes { get; set; }
+        public string[] AllowedClients { get; set; }
     }
 }
 

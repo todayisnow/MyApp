@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Ordering.API.Extensions;
 using Ordering.Application.Features.Orders.Commands.DeleteOrder;
 using Ordering.Application.Features.Orders.Commands.UpdateOrder;
 using Ordering.Application.Features.Orders.Models;
@@ -16,7 +17,7 @@ namespace Ordering.API.Controllers
 {
     [ApiController]
     [Route("api/v1/[controller]")]
-    [Authorize("AuthPolicy")]
+    [Authorize(Policy = AuthorizationConsts.AdministrationPolicy)]
     public class OrderController : ControllerBase
     {
         private readonly IMediator _mediator;
